@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motion Density Index</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="mdi-logo.jpeg" alt="MDi Logo" class="logo">
+    <h1>Motion Density Index</h1>
+    <p class="tagline">Concentrating Motion. Revealing Meaning.</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Welcome to MDi so i like to put my masterpiece in the world to show future to shape the world and i am peter Tsegay tekeste the father of Motion density index and inventor so you can use it to calculate</h2>
+      <p>The Motion Density Index (MDi) transforms motion analysis by quantifying how intensity is concentrated within spatial frameworks.</p>
+    </section>
+
+    <section class="theory">
+      <h2>MDi Theory</h2>
+      <p><strong>Formula:</strong></p>
+      <pre class="formula">MDi = (a × s) / d²</pre>
+      <ul>
+        <li>a = acceleration (m/s²)</li>
+        <li>s = speed (m/s)</li>
+        <li>d = distance (m)</li>
+      </ul>
+      <p><strong>Interpretation:</strong></p>
+      <ul>
+        <li>High MDi → rapid, accelerating motion over short distance</li>
+        <li>Low MDi → slower, dispersed movement across wider span</li>
+      </ul>
+    </section>
+
+    <section class="calculator">
+      <h2>MDi Calculator</h2>
+      <p>Enter values to compute the Motion Density Index:</p>
+      <label for="acceleration">Acceleration (a):</label>
+      <input type="number" id="acceleration" step="any">
+
+      <label for="speed">Speed (s):</label>
+      <input type="number" id="speed" step="any">
+
+      <label for="distance">Distance (d):</label>
+      <input type="number" id="distance" step="any">
+
+      <button onclick="calculateMDi()">Calculate</button>
+      <p id="result"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Motion Density Index Company | Powered by MDI LOGIC</p>
+  </footer>
+
+  <script>
+    function calculateMDi() {
+      const a = parseFloat(document.getElementById("acceleration").value);
+      const s = parseFloat(document.getElementById("speed").value);
+      const d = parseFloat(document.getElementById("distance").value);
+
+      if (isNaN(a) || isNaN(s) || isNaN(d) || d === 0) {
+        document.getElementById("result").innerText = "Please enter valid values. Distance must not be zero.";
+        return;
+      }
+
+      const mdi = (a * s) / (d * d );
+      document.getElementById("result").innerText = `MDi = ${mdi.toFixed(4)}`;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
