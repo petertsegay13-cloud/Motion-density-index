@@ -179,3 +179,232 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- MDi Input + Button -->
+<input type="number" id="mdiInput" placeholder="Enter MDi value" step="0.01">
+<button onclick="checkMDi()">Check MDi</button>
+
+<!-- Result Display -->
+<div id="mdiResult" style="margin-top: 10px; font-weight: bold;"></div>
+
+<!-- Script -->
+<script>
+  function checkMDi() {
+    const input = document.getElementById('mdiInput');
+    const result = document.getElementById('mdiResult');
+    const mdiValue = parseFloat(input.value);
+
+    if (isNaN(mdiValue)) {
+      result.innerText = '❗ Please enter a valid number.';
+      result.style.color = 'black';
+      return;
+    }
+
+    let interpretation = '';
+    let color = '';
+
+    if (mdiValue <= 0.3) {
+      interpretation = 'Low MDi';
+      color = '#e74c3c'; // red
+    } else if (mdiValue <= 0.7) {
+      interpretation = 'Moderate MDi';
+      color = '#f1c40f'; // yellow
+    } else {
+      interpretation = 'High MDi';
+      color = '#2ecc71'; // green
+    }
+
+    result.innerHTML = `Your MDi is <strong>${mdiValue.toFixed(2)}</strong><br><span style="color:${color}">${interpretation}</span>`;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
