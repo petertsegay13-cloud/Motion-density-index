@@ -408,3 +408,175 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<video id="video" width="320" height="240" autoplay muted></video>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+<div id="mdiValue">MDi: ...</div>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const mdiDisplay = document.getElementById('mdiValue');
+  let previousFrame = null;
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => video.srcObject = stream)
+    .catch(err => mdiDisplay.textContent = "Camera error");
+
+  setInterval(() => {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    if (previousFrame) {
+      let motionPixels = 0;
+      for (let i = 0; i < currentFrame.data.length; i += 4) {
+        const diff =
+          Math.abs(currentFrame.data[i] - previousFrame.data[i]) +
+          Math.abs(currentFrame.data[i + 1] - previousFrame.data[i + 1]) +
+          Math.abs(currentFrame.data[i + 2] - previousFrame.data[i + 2]);
+        if (diff > 50) motionPixels++;
+      }
+      const totalPixels = canvas.width * canvas.height;
+      const mdi = ((motionPixels / totalPixels) * 100).toFixed(2);
+      mdiDisplay.textContent = `MDi: ${mdi}%`;
+    }
+
+    previousFrame = currentFrame;
+  }, 100);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
