@@ -217,90 +217,140 @@
 
 
 
+<video id="video" autoplay playsinline width="320" height="240"></video><br>
+<button onclick="toggleCamera()">Switch Camera</button>
+<h2>MDI: <span id="mdiDisplay">Waiting...</span></h2>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- MDi Input + Button -->
-<input type="number" id="mdiInput" placeholder="Enter MDi value" step="0.01">
-<button onclick="checkMDi()">Check MDi</button>
-
-<!-- Result Display -->
-<div id="mdiResult" style="margin-top: 10px; font-weight: bold;"></div>
-
-<!-- Script -->
 <script>
-  function checkMDi() {
-    const input = document.getElementById('mdiInput');
-    const result = document.getElementById('mdiResult');
-    const mdiValue = parseFloat(input.value);
+  let video = document.getElementById('video');
+  let mdiDisplay = document.getElementById('mdiDisplay');
+  let usingFrontCamera = true;
+  let stream;
 
-    if (isNaN(mdiValue)) {
-      result.innerText = '❗ Please enter a valid number.';
-      result.style.color = 'black';
-      return;
+  async function startCamera(facingMode = 'user') {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
     }
 
-    let interpretation = '';
-    let color = '';
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: facingMode }
+      });
+      video.srcObject = stream;
+    } catch (err) {
+      console.error("Camera access error:", err);
+    }
+  }
 
-    if (mdiValue <= 0.3) {
-      interpretation = 'Low MDi';
-      color = '#e74c3c'; // red
-    } else if (mdiValue <= 0.7) {
-      interpretation = 'Moderate MDi';
-      color = '#f1c40f'; // yellow
+  function toggleCamera() {
+    usingFrontCamera = !usingFrontCamera;
+    startCamera(usingFrontCamera ? 'user' : 'environment');
+  }
+
+  // Simple Motion Detection
+  const canvas1 = document.createElement('canvas');
+  const canvas2 = document.createElement('canvas');
+  const ctx1 = canvas1.getContext('2d');
+  const ctx2 = canvas2.getContext('2d');
+
+  const width = 320;
+  const height = 240;
+  canvas1.width = canvas2.width = width;
+  canvas1.height = canvas2.height = height;
+
+  function analyzeMotion() {
+    ctx1.drawImage(video, 0, 0, width, height);
+    const frame1 = ctx1.getImageData(0, 0, width, height);
+
+    setTimeout(() => {
+      ctx2.drawImage(video, 0, 0, width, height);
+      const frame2 = ctx2.getImageData(0, 0, width, height);
+
+      let diffPixels = 0;
+      for (let i = 0; i < frame1.data.length; i += 4) {
+        const r = Math.abs(frame1.data[i] - frame2.data[i]);
+        const g = Math.abs(frame1.data[i+1] - frame2.data[i+1]);
+        const b = Math.abs(frame1.data[i+2] - frame2.data[i+2]);
+        const avg = (r + g + b) / 3;
+        if (avg > 20) diffPixels++;
+      }
+
+      const motionRatio = diffPixels / (width * height);
+      const mdi = Math.round(motionRatio * 100);
+
+      let status = '';
+      let color = '';
+
+      if (mdi <= 10) {
+        status = '🟢 Low MDI';
+        color = 'green';
+      } else if (mdi <= 30) {
+        status = '🟠 Moderate MDI';
+        color = 'orange';
+      } else {
+        status = '🔴 High MDI';
+        color = 'red';
+      }
+
+      mdiDisplay.textContent = `${mdi} - ${status}`;
+      mdiDisplay.style.color = color;
+
+      requestAnimationFrame(analyzeMotion);
+    }, 200); // 200ms delay for next frame
+  }
+
+  // Start front camera on load
+  startCamera('user').then(() => {
+    requestAnimationFrame(analyzeMotion);
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<input type="number" id="mdiInput" placeholder="Enter MDI">
+<button onclick="checkMDI()">Check</button>
+<span id="mdiResult"></span>
+
+<script>
+  function checkMDI() {
+    const mdi = parseFloat(document.getElementById("mdiInput").value);
+    const resultEl = document.getElementById("mdiResult");
+    
+    if (isNaN(mdi) || mdi < 0) {
+      resultEl.textContent = " ❌ Invalid MDI";
+      resultEl.style.color = "gray";
+    } else if (mdi <= 30) {
+      resultEl.textContent = " 🟢 Low MDI";
+      resultEl.style.color = "green";
+    } else if (mdi <= 70) {
+      resultEl.textContent = " 🟠 Moderate MDI";
+      resultEl.style.color = "orange";
     } else {
-      interpretation = 'High MDi';
-      color = '#2ecc71'; // green
+      resultEl.textContent = " 🔴 High MDI";
+      resultEl.style.color = "red";
     }
-
-    result.innerHTML = `Your MDi is <strong>${mdiValue.toFixed(2)}</strong><br><span style="color:${color}">${interpretation}</span>`;
   }
 </script>
 
@@ -499,65 +549,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<video id="video" width="320" height="240" autoplay muted></video>
-<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-<div id="mdiValue">MDi: ...</div>
-
-<script>
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  const mdiDisplay = document.getElementById('mdiValue');
-  let previousFrame = null;
-
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => video.srcObject = stream)
-    .catch(err => mdiDisplay.textContent = "Camera error");
-
-  setInterval(() => {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    if (previousFrame) {
-      let motionPixels = 0;
-      for (let i = 0; i < currentFrame.data.length; i += 4) {
-        const diff =
-          Math.abs(currentFrame.data[i] - previousFrame.data[i]) +
-          Math.abs(currentFrame.data[i + 1] - previousFrame.data[i + 1]) +
-          Math.abs(currentFrame.data[i + 2] - previousFrame.data[i + 2]);
-        if (diff > 50) motionPixels++;
-      }
-      const totalPixels = canvas.width * canvas.height;
-      const mdi = ((motionPixels / totalPixels) * 100).toFixed(2);
-      mdiDisplay.textContent = `MDi: ${mdi}%`;
-    }
-
-    previousFrame = currentFrame;
-  }, 100);
-</script>
 
 
 
